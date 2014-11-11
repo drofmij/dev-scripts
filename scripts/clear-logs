@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Clears log files recursively from specific dir
+rmlogs() {
+   if [ -z "$1" ]
+   then 
+      echo "Directory $1 does not seem to exist."
+   else
+      find $1 -name "*.log" -print0 | xargs -0 rm -rf
+   fi
+}
+
+echo "Clearing logs now..."
+
+rmlogs ~/workspace/branch1
+#rmlogs ~/workspace/branch2
+# Add your other workspace dirs here to clear logs
+
+
+echo "Done."
+
