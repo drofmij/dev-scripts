@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Sorts media in current folder into {target folder}/{YEAR created}-{MONTH created}
+# uses Imagemagick identity command and exiftool
+
+GETDATEIMG="identify -format %[exif:DateTimeOriginal]"
+GETDATEMOV="exiftool -T -createdate"
+DIR=$(pwd)
+TARGETDIR=/your/target/dir
+
+echo Sorting Media in $DIR ...
+
+for FILE in $(ls *.JPG *.PNG *.MOV)
+do
+    if [[ $FILE == *"MOV"*  ]]
+    then
+        DATE=$($GETDATEMOV $FILE)
+    else
+        DATE=$($GETDATEIMG $FILE)
+    fi
+    YEAR=${DATE:0:4}
+    MONTH=${DATE:5:2}
+    FOLDER=$TARGETDIR/$YEAR-$MONTH
+    if [ ! -d $FOLDER ]
+    then
+        echo Adding folder for $YEAR-$MONTH
+        mkdir -p $FOLDER
+    fi
+    if [ -e $FOLDER/$FILE ]
+    then
+        echo $FILE exists in $FOLDER >> $DIR/sortphotos.log
+    else
+        echo Moving $FILE to $FOLDER
+        mv -n $FILE $FOLDER
+    fi
+done
